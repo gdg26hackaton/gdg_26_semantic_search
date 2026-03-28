@@ -1,21 +1,45 @@
-import React from 'react';
-import { 
-  Search, 
-  ArrowRight, 
-  FileText, 
-  MoreVertical, 
-  Upload, 
-  Info, 
-  Sparkles, 
+import React, { useState, useEffect } from 'react';
+import {
+  Search,
+  ArrowRight,
+  FileText,
+  MoreVertical,
+  Upload,
+  Info,
+  Sparkles,
   Plus,
   Calendar,
   ShoppingBag,
-  Share2
+  Share2,
+  Mic,
+  MicOff
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
+import { useDictaphone } from '../hooks/useDictaphone';
 
 export const Dashboard: React.FC = () => {
+  const { transcript, listening, supported, startListening, stopListening } = useDictaphone();
+  const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    if (transcript) {
+      setQuery(transcript);
+    }
+  }, [transcript]);
+
+  const handleMicClick = () => {
+    if (!supported) {
+      alert('Tu navegador no soporta el reconocimiento de voz (prueba en Chrome o Edge).');
+      return;
+    }
+    if (listening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
+
   const recentAssets = [
     { id: '1', name: 'Q4 Market Analysis.pdf', modified: 'Modified 2 hours ago', type: 'pdf' },
     { id: '2', name: 'Project_Budget_Final.xlsx', modified: 'Modified yesterday', type: 'xlsx' },
@@ -32,7 +56,7 @@ export const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Semantic Search Card */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="card p-8 space-y-8"
@@ -48,11 +72,45 @@ export const Dashboard: React.FC = () => {
           </div>
 
           <div className="relative">
-            <input 
-              type="text" 
-              placeholder="Query your entire knowledge base..." 
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-6 pr-16 text-sm focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all"
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Query your entire knowledge base..."
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-6 pr-24 text-sm focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all"
             />
+            <div className="absolute right-14 top-1/2 -translate-y-1/2 z-10">
+              <button
+                onClick={handleMicClick}
+                className={cn(
+                  "relative flex items-center justify-center p-2 rounded-full transition-colors",
+                  listening ? "bg-blue-50" : "text-slate-400 hover:bg-slate-100 hover:text-brand-blue"
+                )}
+                title={listening ? "Detener grabación" : "Búsqueda por voz"}
+              >
+                <span className="relative z-10 flex items-center justify-center w-[18px] h-[18px]">
+                  {listening ? (
+                    <div className="flex items-center gap-[3px]">
+                      {[0, 1, 2].map((i) => (
+                        <motion.div
+                          key={i}
+                          className="w-1.5 h-1.5 bg-brand-blue rounded-full"
+                          animate={{ y: [0, -4, 0] }}
+                          transition={{
+                            duration: 0.6,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay: i * 0.15
+                          }}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <Mic size={18} />
+                  )}
+                </span>
+              </button>
+            </div>
             <button className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-brand-blue text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors">
               <ArrowRight size={18} />
             </button>
@@ -85,7 +143,7 @@ export const Dashboard: React.FC = () => {
         </motion.div>
 
         {/* OCR Processing Card */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -125,68 +183,17 @@ export const Dashboard: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Flyer Creator Section */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="card p-8 space-y-8"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-brand-blue">
-              <Sparkles size={24} />
-            </div>
-            <h3 className="text-xl font-bold">Flyer Creator</h3>
-          </div>
-          <button className="btn-primary">
-            <Plus size={18} />
-            <span className="text-xs font-bold uppercase tracking-wider">New Canvas</span>
-          </button>
+      <footer className="pt-12 border-t border-border flex flex-col md:flex-row items-center justify-between gap-6 text-[10px] font-bold text-slate-400 tracking-widest uppercase">
+        <div>
+          <p className="text-brand-blue">
+            GRUPO SAVE HELP <span className="text-slate-400 ml-2 font-medium">© 2026 GDG TACNA</span>
+          </p>
+          <p className="mt-1 text-slate-500">Creado por: Gustavo, Julio, Rogert, Alonso</p>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 relative h-80 rounded-2xl overflow-hidden group">
-            <img 
-              src="https://picsum.photos/seed/workspace/1200/800" 
-              alt="Smart Layout" 
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-8 flex flex-col justify-end">
-              <h4 className="text-2xl font-bold text-white tracking-tight">Smart Layout Engine</h4>
-              <p className="text-slate-300 mt-2 text-sm max-w-md">
-                Let our AI arrange your assets into professional, grid-aligned marketing materials in seconds.
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            {[
-              { icon: Calendar, title: 'Event Promotions', desc: '12 New templates added', color: 'bg-blue-50 text-blue-500' },
-              { icon: ShoppingBag, title: 'Product Catalogs', desc: 'Optimized for conversion', color: 'bg-indigo-50 text-indigo-500' },
-              { icon: Share2, title: 'Social Briefs', desc: 'Multi-channel presets', color: 'bg-violet-50 text-violet-500' },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-transparent hover:border-slate-200 transition-all cursor-pointer">
-                <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", item.color)}>
-                  <item.icon size={20} />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-900">{item.title}</p>
-                  <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-
-      <footer className="pt-12 border-t border-border flex items-center justify-between text-[10px] font-bold text-slate-400 tracking-widest uppercase">
-        <p>© 2024 SAVE HELP • SECURE PRODUCTIVITY SUITE</p>
         <div className="flex gap-8">
-          <a href="#" className="hover:text-brand-blue transition-colors">Privacy Protocol</a>
-          <a href="#" className="hover:text-brand-blue transition-colors">API Documentation</a>
-          <a href="#" className="hover:text-brand-blue transition-colors">Support Portal</a>
+          <a href="#" className="hover:text-brand-blue transition-colors">Privacidad</a>
+          <a href="#" className="hover:text-brand-blue transition-colors">API</a>
+          <a href="#" className="hover:text-brand-blue transition-colors">Soporte</a>
         </div>
       </footer>
     </div>
