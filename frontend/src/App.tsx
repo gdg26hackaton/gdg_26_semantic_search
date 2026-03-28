@@ -4,6 +4,8 @@ import { Sidebar } from './components/Sidebar';
 import { TopNav } from './components/TopNav';
 import { Dashboard } from './components/Dashboard';
 import { FlyerCreator } from './components/FlyerCreator';
+import GeminiPDFChat from './components/GeminiPDFChat';
+import { DocumentManager } from './components/DocumentManager';
 import { View } from './types';
 
 export default function App() {
@@ -11,24 +13,15 @@ export default function App() {
 
   const renderView = () => {
     switch (currentView) {
+      case 'semantic-search':
+      case 'ocr':
+        return <GeminiPDFChat />;
+      case 'documents':
+        return <DocumentManager />;
       case 'dashboard':
         return <Dashboard />;
       case 'flyer-creator':
         return <FlyerCreator />;
-      case 'semantic-search':
-      case 'ocr':
-        return (
-          <div className="flex flex-col items-center justify-center h-full text-center p-12 space-y-4">
-            <div className="w-20 h-20 bg-blue-50 rounded-2xl flex items-center justify-center text-brand-blue">
-              {currentView === 'semantic-search' ? <Search size={40} /> : <FileText size={40} />}
-            </div>
-            <h2 className="text-2xl font-bold tracking-tight uppercase">Module Initializing</h2>
-            <p className="text-slate-500 max-w-md">
-              The {currentView.replace('-', ' ')} engine is currently being optimized for your workspace. 
-              Please check back in a moment.
-            </p>
-          </div>
-        );
       default:
         return <Dashboard />;
     }

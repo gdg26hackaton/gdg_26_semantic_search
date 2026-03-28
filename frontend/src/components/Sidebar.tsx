@@ -21,7 +21,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) =
   const menuItems = [
     { id: 'dashboard', label: 'DASHBOARD', icon: LayoutDashboard },
     { id: 'semantic-search', label: 'SEMANTIC SEARCH', icon: Search },
-    
+    { id: 'documents', label: 'DOCUMENTS', icon: FileText },
   ];
 
   return (

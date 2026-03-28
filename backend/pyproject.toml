@@ -23,4 +23,5 @@ dependencies = [
     "python-multipart>=0.0.22",
     "scikit-image>=0.26.0",
     "uvicorn>=0.42.0",
+    "websockets>=16.0",
 ]
