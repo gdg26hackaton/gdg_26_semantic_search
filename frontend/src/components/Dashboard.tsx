@@ -19,26 +19,6 @@ import { cn } from '@/lib/utils';
 import GeminiPDFChat from './GeminiPDFChat';
 
 export const Dashboard: React.FC = () => {
-  const { transcript, listening, supported, startListening, stopListening } = useDictaphone();
-  const [query, setQuery] = useState('');
-
-  useEffect(() => {
-    if (transcript) {
-      setQuery(transcript);
-    }
-  }, [transcript]);
-
-  const handleMicClick = () => {
-    if (!supported) {
-      alert('Tu navegador no soporta el reconocimiento de voz (prueba en Chrome o Edge).');
-      return;
-    }
-    if (listening) {
-      stopListening();
-    } else {
-      startListening();
-    }
-  };
 
   const recentAssets = [
     { id: '1', name: 'Q4 Market Analysis.pdf', modified: 'Modified 2 hours ago', type: 'pdf' },

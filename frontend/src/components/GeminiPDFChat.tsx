@@ -1,14 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Paperclip, Mic, Send, Trash2, FileText, 
   User, Sparkles, X, MicOff 
 } from 'lucide-react';
+import { useDictaphone } from '../hooks/useDictaphone';
 
 export default function GeminiPDFChat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [files, setFiles] = useState([]); // Lista de PDFs subidos
-  const [isListening, setIsListening] = useState(false);
+
+  const { transcript, listening: isListening, startListening, stopListening, resetTranscript } = useDictaphone();
+
+  const baseInputRef = React.useRef("");
+
+  useEffect(() => {
+    if (isListening) {
+      const currentVal = transcript.trim();
+      if (currentVal) {
+        setInput(baseInputRef.current ? `${baseInputRef.current} ${currentVal}` : currentVal);
+      }
+    }
+  }, [transcript, isListening]);
+
+  const toggleListening = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      baseInputRef.current = input.trim();
+      resetTranscript();
+      startListening();
+    }
+  };
 
   // Función para simular envío (aquí conectarás con tu Backend RAG)
   const handleSend = () => {
@@ -114,10 +137,27 @@ export default function GeminiPDFChat() {
 
           {/* Botón de Voz */}
           <button 
-            onClick={() => setIsListening(!isListening)}
-            className={`p-3 rounded-full transition-all ${isListening ? 'bg-red-100 text-red-600 animate-pulse' : 'hover:bg-gray-200 text-gray-500'}`}
+            onClick={toggleListening}
+            className={`p-3 rounded-full transition-all flex items-center justify-center w-12 h-12 ${isListening ? 'bg-blue-50 text-blue-600 shadow-inner' : 'hover:bg-gray-200 text-gray-500'}`}
           >
-            {isListening ? <MicOff size={24} /> : <Mic size={24} />}
+            {isListening ? (
+              <div className="flex gap-1 items-center justify-center">
+                <style>{`
+                  @keyframes bounceDot {
+                    0%, 100% { transform: translateY(-3px); }
+                    50% { transform: translateY(5px); }
+                  }
+                  .animate-bounce-dot {
+                    animation: bounceDot 0.8s ease-in-out infinite;
+                  }
+                `}</style>
+                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce-dot" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce-dot" style={{ animationDelay: '200ms' }}></div>
+                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce-dot" style={{ animationDelay: '400ms' }}></div>
+              </div>
+            ) : (
+              <Mic size={24} />
+            )}
           </button>
 
           {/* Botón Enviar */}
