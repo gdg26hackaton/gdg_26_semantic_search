@@ -15,7 +15,7 @@ export const DocumentManager: React.FC = () => {
   const fetchDocuments = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/documents');
+      const response = await fetch('http://localhost:8000/documents/');
       if (response.ok) {
         const data = await response.json();
         setDocuments(data);
@@ -52,7 +52,7 @@ export const DocumentManager: React.FC = () => {
     formData.append('title', file.name); // Required by backend
 
     try {
-      const response = await fetch('http://localhost:8000/documents', {
+      const response = await fetch('http://localhost:8000/documents/', {
         method: 'POST',
         body: formData,
       });

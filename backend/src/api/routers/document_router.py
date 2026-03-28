@@ -42,7 +42,6 @@ async def ingest_document(file: UploadFile = File(...), title: str = Form(...)):
         ),  # You could generate a UUID here or use user session
         user_messages=[dto],
         input_file=file_bytes,
-        is_voice=False,
     )
 
     return {

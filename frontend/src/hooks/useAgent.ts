@@ -106,7 +106,7 @@ export const useAgent = (url: string = 'ws://127.0.0.1:8000/ws/chat') => {
     formData.append('title', file.name); // Ensure backend has a title
 
     try {
-      const response = await fetch('http://localhost:8000/documents', {
+      const response = await fetch('http://localhost:8000/documents/', {
         method: 'POST',
         body: formData,
       });

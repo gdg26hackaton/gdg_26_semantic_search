@@ -69,12 +69,13 @@ class AgentServiceAdapter(IAgentService):
                     for tc in getattr(msg, "tool_calls", []):
                         if tc["name"].startswith("cli_"):
                             client_actions.append(ClientAction(
-                                tool_name=tc["name"],
+                                action_type=tc["name"],
                                 payload=tc["args"]
                             ))
 
         # 6. Map back to Output DTO
-        response_text = result_state.get("response", "Lo siento, hubo un error procesando la solicitud.")
+        # Handle None or empty response
+        response_text = result_state.get("response") or "Lo siento, hubo un error procesando la solicitud."
         
         # Fallback: if 'response' is empty but the LLM provided text in the last message
         if (not response_text or response_text == "Lo siento, hubo un error procesando la solicitud.") and messages:
