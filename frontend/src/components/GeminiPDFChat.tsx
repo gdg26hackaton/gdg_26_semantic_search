@@ -13,7 +13,6 @@ export default function GeminiPDFChat() {
   } = useAgent();
   const { transcript, listening, startListening, stopListening, resetTranscript } = useDictaphone();
   const [input, setInput] = useState("");
-  const [files, setFiles] = useState<{ name: string }[]>([]);
 
   // Sync dictaphone transcript with input area
   useEffect(() => {
@@ -79,6 +78,13 @@ export default function GeminiPDFChat() {
                 <span>{msg.role === 'user' ? 'Usuario' : msg.role === 'system' ? 'Evento del Sistema' : 'Asistente IA'}</span>
               </div>
               <p className="text-sm md:text-[15px] leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+              
+              {/* Citation (from origin/main feature) */}
+              {msg.source && (
+                <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-2 text-[10px] font-bold text-blue-600 uppercase tracking-tighter">
+                  <FileText size={12} /> {msg.source} • Pág {msg.page}
+                </div>
+              )}
             </div>
           </div>
         ))}

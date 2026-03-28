@@ -39,10 +39,10 @@ interface SpeechRecognition extends EventTarget {
 declare global {
   interface Window {
     SpeechRecognition: {
-      new (): SpeechRecognition;
+      new(): SpeechRecognition;
     };
     webkitSpeechRecognition: {
-      new (): SpeechRecognition;
+      new(): SpeechRecognition;
     };
   }
 }
@@ -51,24 +51,24 @@ export const useDictaphone = () => {
   const [transcript, setTranscript] = useState('');
   const [listening, setListening] = useState(false);
   const [supported, setSupported] = useState(true);
-  
+
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
+
     if (!SpeechRecognition) {
       setSupported(false);
       return;
     }
-    
+
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'es-ES'; // We can make this configurable if needed
-    
+
     recognition.onresult = (event) => {
       let currentTranscript = '';
       for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -85,18 +85,18 @@ export const useDictaphone = () => {
         return currentTranscript;
       });
     };
-    
+
     recognition.onerror = (event) => {
       console.error('Speech recognition error', event.error);
       setListening(false);
     };
-    
+
     recognition.onend = () => {
       setListening(false);
     };
-    
+
     recognitionRef.current = recognition;
-    
+
     return () => {
       recognition.abort();
     };
